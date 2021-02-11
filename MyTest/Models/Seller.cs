@@ -12,6 +12,7 @@ namespace MyTest.Models
         public DateTime BirthDate { get; set; }
         public double BaseSalary { get; set; }
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
+        public int DepartmentId { get; set; }
         public Department Department { get; set; }
 
         public Seller()
@@ -42,5 +43,6 @@ namespace MyTest.Models
         {
             return Sales.Where(x => x.Date >= initial && x.Date <= final).Sum(p => p.Amount);
         }
+        
     }
 }

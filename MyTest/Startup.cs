@@ -40,8 +40,10 @@ namespace MyTest
             services.AddDbContext<MyTestContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("MyTestContext"), builder =>
                         builder.MigrationsAssembly("MyTest")));
+
             services.AddScoped<SeedingService>();
             services.AddScoped<SellerService>();
+            services.AddScoped<DepartmentService>();
             
         }
 

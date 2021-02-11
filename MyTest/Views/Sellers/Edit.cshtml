@@ -1,6 +1,6 @@
 ﻿@model MyTest.Models.ViewModels.SellerViewModel
 @{
-    ViewData["Title"] = "Created";
+    ViewData["Title"] = "Edit";
 }
 
 <h2>
@@ -9,7 +9,8 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Created">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Seller.Id" />
             <div class="form-group">
                 <label asp-for="Seller.Name" class="control-label"></label>
                 <input asp-for="Seller.Name" class="form-control" />
@@ -28,11 +29,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Seller.DepartmentId" class="control-label"></label>
-                <select asp-for="Seller.DepartmentId" asp-items="@(new SelectList(Model.Departments, "Id","Name"))"
-                        class="form-control"></select>
+                <select asp-for="Seller.DepartmentId" asp-items="@(new SelectList(Model.Departments, "Id","Name"))"class="form-control"></select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Created" class="btn btn-danger"/>
+            <div class="form-group"s>
+                <input type="submit" value="Save" class="btn btn-danger">
             </div>
         </form>
     </div>
