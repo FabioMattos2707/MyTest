@@ -4,7 +4,7 @@ using MyTest.Models;
 using MyTest.Models.ViewModels;
 using System.Collections.Generic;
 using MyTest.Services.Exceptions;
-
+using System.Diagnostics;
 
 namespace MyTest.Controllers
 {
@@ -31,7 +31,7 @@ namespace MyTest.Controllers
             var ViewModel = new SellerViewModel { Departments = list };
             return View(ViewModel);
         }
-        
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult Created(Seller seller)
@@ -44,14 +44,14 @@ namespace MyTest.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!"});
             }
 
             var obj = _sellerService.FindById(id.Value);
 
-            if ( obj == null)
+            if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
             return View(obj);
         }
@@ -68,14 +68,14 @@ namespace MyTest.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
 
             var obj = _sellerService.FindById(id.Value);
 
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
             return View(obj);
         }
@@ -84,14 +84,14 @@ namespace MyTest.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
 
             var seller = _sellerService.FindById(id.Value);
 
             if (seller == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
             List<Department> departments = _departmentService.FindAll();
             SellerViewModel viewModel = new SellerViewModel { Seller = seller, Departments = departments };
@@ -103,7 +103,6 @@ namespace MyTest.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller)
         {
-
             if (id != seller.Id)
             {
                 return BadRequest();
@@ -113,15 +112,25 @@ namespace MyTest.Controllers
                 _sellerService.Update(seller);
                 return RedirectToAction(nameof(Index));
             }
-            catch (NotFoundException)
+            catch (NotFoundException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            catch (DbConcurrencyException)
+            catch (DbConcurrencyException e)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
 
+        }
+
+        public IActionResult Error(string message)
+        {
+            var ViewModel = new ErrorViewModel {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(ViewModel);
         }
 
     }
