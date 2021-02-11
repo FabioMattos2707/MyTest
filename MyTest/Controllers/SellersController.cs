@@ -36,6 +36,12 @@ namespace MyTest.Controllers
         [HttpPost]
         public IActionResult Created(Seller seller)
         {
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                var ViewModel = new SellerViewModel { Seller = seller, Departments = departments};
+                return View(ViewModel);
+            }
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
@@ -103,6 +109,12 @@ namespace MyTest.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller)
         {
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                var ViewModel = new SellerViewModel { Seller = seller, Departments = departments };
+                return View(ViewModel);
+            }
             if (id != seller.Id)
             {
                 return BadRequest();
