@@ -5,6 +5,7 @@ using MyTest.Models.ViewModels;
 using System.Collections.Generic;
 using MyTest.Services.Exceptions;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MyTest.Controllers
 {
@@ -19,41 +20,41 @@ namespace MyTest.Controllers
             _sellerService = sellerService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _sellerService.FindAll();
+            var list = await _sellerService.FindAllAsync();
             return View(list);
         }
 
-        public IActionResult Created()
+        public async Task<IActionResult> Created()
         {
-            var list = _departmentService.FindAll();
+            var list = await _departmentService.FindAllAsync();
             var ViewModel = new SellerViewModel { Departments = list };
             return View(ViewModel);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Created(Seller seller)
+        public async Task<IActionResult> Created(Seller seller)
         {
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAllAsync();
                 var ViewModel = new SellerViewModel { Seller = seller, Departments = departments};
                 return View(ViewModel);
             }
-            _sellerService.Insert(seller);
+            await _sellerService.InsertAsync(seller);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int? id)
+        public async  Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found!"});
             }
 
-            var obj = _sellerService.FindById(id.Value);
+            var obj = await _sellerService.FindByIdAsync(id.Value);
 
             if (obj == null)
             {
@@ -64,20 +65,20 @@ namespace MyTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async  Task<IActionResult> Delete(int id)
         {
-            _sellerService.Remove(id);
+             await _sellerService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
 
-            var obj = _sellerService.FindById(id.Value);
+            var obj = await _sellerService.FindByIdAsync(id.Value);
 
             if (obj == null)
             {
@@ -86,20 +87,20 @@ namespace MyTest.Controllers
             return View(obj);
         }
 
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
 
-            var seller = _sellerService.FindById(id.Value);
+            var seller = await _sellerService.FindByIdAsync(id.Value);
 
             if (seller == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found!" });
             }
-            List<Department> departments = _departmentService.FindAll();
+            List<Department> departments = await _departmentService.FindAllAsync();
             SellerViewModel viewModel = new SellerViewModel { Seller = seller, Departments = departments };
 
             return View(viewModel);
@@ -107,11 +108,11 @@ namespace MyTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Seller seller)
+        public async Task<IActionResult> Edit(int id, Seller seller)
         {
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments =  await _departmentService.FindAllAsync();
                 var ViewModel = new SellerViewModel { Seller = seller, Departments = departments };
                 return View(ViewModel);
             }
@@ -121,7 +122,7 @@ namespace MyTest.Controllers
             }
             try
             {
-                _sellerService.Update(seller);
+                await _sellerService.UpdateAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)

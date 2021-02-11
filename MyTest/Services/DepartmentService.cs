@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyTest.Data;
 using MyTest.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyTest.Services
 {
@@ -16,9 +17,9 @@ namespace MyTest.Services
             _context = context;
         }
 
-        public List<Department> FindAll()
+        public async Task<List<Department>> FindAllAsync()
         {
-            return _context.Department.ToList();
+            return await _context.Department.ToListAsync();
         }
     }
 }
